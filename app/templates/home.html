@@ -5,14 +5,31 @@
     <b><h1>JETLAG</h1></b>
     <br><br><br>
     <div class="games">
-        <form action = "/" method="POST">
-        <input type="submit" class="random" name="random" value="random">
-        </form>
-        <div class="event">
+	<div class="event">
+		{% if username != "" %}
+			<h1>{{username}}</h1>
+		{% endif %}
+        	<form action = "/" method="POST">
+        	<input type="submit" class="random" name="random" value="random">
+        	</form>
+        	<form action = "/" method="POST">
+        	<input type="text" id="username" name="username" placeholder="Type here..." required>	
+        	<input type="submit" class="user" name="user" value="Submit">
+        	</form>
         	{% if press %}
 	        	<p>{{card}}</p>
+	                <form action = "/" method="POST">
+                	<input type="submit" class="add" name="add" value="add">
+                	</form>	
 	    	{% endif %}
 	    	<br><br><br>
+		{% if all_cards != "" %}
+                        <p>{{all_cards}}</p>
+                        <form action = "/" method="POST">
+			<input type="remove" id="remove" name="remove" placeholder="Type here..." required>
+                	<input type="submit" class="rm" name="rm" value="remove">
+                	</form>
+                {% endif %}
 	    	<h1>Questions</h1>
 	    	<h3>Matching</h3>
 		<p>Draw 3 Pick 1 : 5 minutes to Respond</p>
