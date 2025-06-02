@@ -1,0 +1,55 @@
+<!DOCTYPE html>                                                           <html lang="en">                                                          <head>                                                                        <meta charset="UTF-8">                                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4>    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=>    <title>Flashback</title>
+</head>
+<body>
+    <b><h1>JETLAG</h1></b>
+    <br><br><br>
+    <div class="games">
+        <form action = "/" method="POST">
+        <input type="submit" class="random" name="random" value="random">
+        </form>
+        <div class="event">
+        	{% if press %}
+	        	<p>{{card}}</p>
+	    	{% endif %}
+	    	<br><br><br>
+	    	<h1>Questions</h1>
+	    	<h3>Matching</h3>
+		<p>Draw 3 Pick 1 : 5 minutes to Respond</p>
+		<br>
+	    	<p>Is your nearest _____ the same as my nearest _____?</p>
+	    	<p>Commercial Airport, Transit Line, Station Name Length, Street, Town, Borough, Mountain, Landmass, Park, Amusement Park, Zoo, Aquarium, Golf Course, Museum, Movie Theatre, Hospital, Library</p>
+		<br><br>
+		<h3>Measuring</h3>
+                <p>Draw 3 Pick 1 : 5 minutes to Respond</p>
+		<br>
+		<p>Compared to me, are you closer to or further from _____?</p>
+                <p>Commercial Airport, Transit Line, Station Name Length, Street, Town, Borough, Mountain, Landmass, Park, Amusement Park, Zoo, Aquarium, Golf Course, Museum, Movie Theatre, Hospital, Library</p>	
+		<br><br>
+		<h3>Thermometer</h3>
+                <p>Draw 2 Pick 1 : 5 minutes to Respond</p>
+		<br>
+		<p>I just traveled (at least) _____. Am I hotter or colder?</p>
+		<p>0.5 mi, 3 mi, 10 mi</p>
+		<br><br>
+		<h3>Radar</h3>
+                <p>Draw 2 Pick 1 : 5 minutes to Respond</p>
+		<br>
+		<p>Are you within _____ of me?</p>
+		<p>0.25 mi, 0.5 mi, 1 mi, 3 mi, 5 mi, 10 mi, 25 mi, 50 mi, 100 mi, (Choose) mi</p>
+		<br><br>
+		<h3>Tentacles</h3>
+                <p>Draw 4 Pick 2 : 5 minutes to Respond</p>
+		<br>
+		<p>Of all the _____ within 1 mile of me, which are you closest to?</p>
+		<p>Museums, Libraries, Movie Theatres, Hospitals, Subway Stations</p>
+		<br><br>
+		<h3>Photos</h3>
+                <p>Draw 1 : 10 minutes to Respond</p>
+		<br>
+		<p>Send a Photo of _____</p>
+		<p> A tree, the sky, you, widest street, tallest structure in your sightline, any building visible from station, tallest building visible from station, trace nearest street/path, trwo buildings, restaurant interior, train platform, Park, Grocery Store Aisle, Place of Worship</p>
+        </div>
+    </div>
+    <br><br><br>
+</body>
