@@ -38,17 +38,20 @@ def addCard(user, card):
     db.close()  
 
 def remCard(user, card):
-	index=4
+	index = None
 	db = sqlite3.connect(DB_FILE, check_same_thread=False)
 	c = db.cursor()
 	c.execute("SELECT card1, card2, card3, card4, card5 FROM users WHERE username = (?)", (user,))
 	result=c.fetchone()
 	for i in range(len(result)):
-		if result[i] ==card:
-			index=i
-			break
-	c.execute(f"UPDATE users SET card{index + 1} = ? WHERE username = ?", (None, user))
-	print(result)
+		if isinstance(result[i], str):
+			parts = result[i].split(" / ")
+			if parts[0] ==card:
+				index=i + 1
+				break
+	if index != None:
+		c.execute(f"UPDATE users SET card{index} = ? WHERE username = ?", (None, user))
+		print(result)
 	db.commit()
 	db.close()
 def getCards(user):
