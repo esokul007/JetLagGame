@@ -1,13 +1,13 @@
 
-<!DOCTYPE html>                                                           
-<html lang="en">                                                          
-<head>                                                                        
+<!DOCTYPE html>
+<html lang="en">
+<head>
 	<meta charset="UTF-8">
-	<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">                                                    
-	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4>    
+	<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4>
 	<link rel="stylesheet" href="../static/style.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=> -->    
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=> -->
 	<title>JetLag</title>
 	<style>
 		body {
@@ -76,7 +76,7 @@
 			right: 8px;
 			z-index: 2;
 			margin: 0;
-		}		
+		}
 
 		.add-button,
 		.rem-button {
@@ -134,7 +134,7 @@
 			}
 
 	</style>
-		
+
 </head>
 <body>
     <b><h1>JETLAG</h1></b>
@@ -150,7 +150,7 @@
         	<input type="submit" class="random" name="random" value="Draw Card">
         	</form>
         	<form action = "/" method="POST">
-        	<input type="text" id="username" name="username" placeholder="Type here..." required>	
+        	<input type="text" id="username" name="username" placeholder="Type here..." required>
         	<input type="submit" class="user" name="user" value="Change User">
         	</form>
         	{% if show %}
@@ -184,14 +184,14 @@
                                                 </form>
 						{% set parts = c.split(" / ") %}
                                 		{% if parts|length > 1 %}
-                                        		<div class="front"><p>{{parts[0]}}</div>                                        
+                                        		<div class="front"><p>{{parts[0]}}</div>
 							<div class="back">{{parts[1]}}<p></div>
                                 		{% else %}
                                         		<p>{{c}}</p>
                                 		{% endif %}
 					{% endif %}
 					</div>
-				{% endfor %}                        	
+				{% endfor %}
 			</div>
                 {% endif %}
 		{% if username != "" and username != None %}
@@ -230,7 +230,7 @@
                 <p>Draw 3 Pick 1 : 5 minutes to Respond</p>
 		<br>
 		<p>Compared to me, are you closer to or further from _____?</p>
-                <p>Commercial Airport, Transit Line, Station Name Length, Street, Town, Borough, Mountain, Landmass, Park, Amusement Park, Zoo, Aquarium, Golf Course, Museum, Movie Theatre, Hospital, Library</p>	
+                <p>Commercial Airport, Transit Line, Station Name Length, Street, Town, Borough, Mountain, Landmass, Park, Amusement Park, Zoo, Aquarium, Golf Course, Museum, Movie Theatre, Hospital, Library</p>
 		<br><br>
 		<h3>Thermometer</h3>
                 <p>Draw 2 Pick 1 : 5 minutes to Respond</p>
@@ -328,37 +328,51 @@
                         }
                 }, {passive:false});
 
-		// Mouse events
-        	card.addEventListener('mousedown', e => {
-            		mouseDown = true;
-            		startY = e.clientY;
-			startX = e.clientX;
-			activeCard=card;
-			card.classList.add('curve');    // Added: disable transition during drag
-			document.addEventListener('mouseup', mouseUpHandler);
-        	});
+								// Mouse events
+						    card.addEventListener('mousedown', e => {
+						        if (e.target.closest('.add-button')||e.target.closest('.rem-button')) return; // Allow button click
+						        mouseDown = true;
+						        startY = e.clientY;
+						        startX = e.clientX;
+						        activeCard = card;
+						        card.classList.add('curve');
+						        document.addEventListener('mousemove', mouseMoveHandler);
+						        document.addEventListener('mouseup', mouseUpHandler);
+						    });
 
-		function mouseMoveHandler(e) {
-        		if (!mouseDown || !activeCard) return;
-        		const dx = e.clientX - startX;  // Added: calculate horizontal drag
-        		const rotate = dx > 0 ? Math.min(dx / 8, 20) : 0; // Added: rightward only, max 20deg
-        		activeCard.style.transform = `translateX(${dx}px) rotate(${rotate}deg)`; // Added: apply translation and rotation
-    		}
+						    function mouseMoveHandler(e) {
+						        if (!mouseDown || !activeCard) return;
+						        let dy = e.clientY - startY; // vertical movement
+						        let dx = e.clientX - startX; // horizontal movement
+						        let transform = '';
+						        if (dy < 0) {
+						            dy = Math.max(dy, -120)
+						            if (dy > -50) {
+						                transform = `translateY(${dy}px)`;
+						            } else {
+						                const rotate = Math.min(-(dy + 50) / 3, 20);
+						                const theta = rotate * Math.PI / 180;
+						                const w = activeCard.offsetWidth;
+						                const compensateX = w * (1 - Math.cos(theta));
+						                transform = `translate(${compensateX}px, ${dy}px) rotate(${rotate}deg)`;
+						            }
+						            activeCard.style.transform = transform;
+						        }
+						    }
 
-        	// [CHANGED] Handle mouseup anywhere on the document
-        	function mouseUpHandler(e) {
-            		if (!mouseDown || !activeCard) return;
-            		mouseDown = false;
-			activeCard.classList.remove('curve'); // Added: restore transition after drag
-        		activeCard.style.transform = '';      // Added: reset transform after drag
-            		const endY = e.clientY;
-            		if (startY - endY > 50) {  // Swiped up
-                		handleSwipe(activeCard);
-            		}
-            		activeCard = null; // [CHANGED] Reset active card
-            		document.removeEventListener('mouseup', mouseUpHandler); // [CHANGED] Remove handler after use
-			document.removeEventListener('mousemove', mouseMoveHandler);
-        	}
+						    function mouseUpHandler(e) {
+						        if (!mouseDown || !activeCard) return;
+						        mouseDown = false;
+						        activeCard.classList.remove('curve');
+						        activeCard.style.transform = '';
+						        const endY = e.clientY;
+						        if (startY - endY > 50) {  // Swiped up
+						            handleSwipe(activeCard);
+						        }
+						        activeCard = null;
+						        document.removeEventListener('mouseup', mouseUpHandler);
+						        document.removeEventListener('mousemove', mouseMoveHandler);
+						    }
 
         	// Reusable swipe handler (unchanged)
         	function handleSwipe(cardElem) {
