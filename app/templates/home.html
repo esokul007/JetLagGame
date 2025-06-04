@@ -53,6 +53,10 @@
 			opacity: 0;
 			font-size: 10px;
 		}
+		.card.swipe-up{
+			transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  			transform: translateY(-150px);
+		}
 
 		.card:hover .front {
 			opacity: 0;
@@ -257,14 +261,23 @@
                 let startY = 0;
 
                 card.addEventListener('touchstart', e => {
+			e.preventDefault();
                         startY = e.touches[0].clientY;
-                });
+                }, { passive: false });
 
                 card.addEventListener('touchend', e => {
                         const endY = e.changedTouches[0].clientY;
                         if (startY - endY > 50) {  // Swiped up
                                 const cardValue = card.dataset.card;
-				print(cardValue)
+				if (typeof cardValue === "undefined"){
+					return;
+				}
+				// Animate the card
+        			card.classList.add('swipe-up');
+				setTimeout(() => {
+            				card.classList.remove('swipe-up');
+        			}, 500);
+				console.log(cardValue)
                                 fetch('/', {
                                         method: 'POST',
                                         headers: {
@@ -277,11 +290,12 @@
                                 }).then(response => {
                                         if (response.ok) {
                                                 alert("Card sent!");
+						window.location.reload();
                                                 // Optionally remove card from view
                                         }
                                 });
                         }
-                });
+                }, {passive:false});
         });
         </script>
 </body>
