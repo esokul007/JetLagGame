@@ -25,7 +25,44 @@ curse={
     "Curse of the Ransom Note" : ["Spell out 'Ransom Note' as a ransom note", "The next question that the seekers ask must be composed of words and letters cut out of any printed material. The question must be coherent and include at least 5 words."],
     "Curse of The Gambler's Feet" : ["Roll a die if it's even, this curse has no effect", "For the next [S20, M40, L60] minutes seekers must roll a die before they take any steps in any direction, they may take that many steps before rolling again"]
 }
-
+questions={
+	"Matching":{
+		"template": "Is your nearest _____ the same as my nearest _____?",
+		"filters": ["Airport", "Train Station", "Station name length", "town", "borough", "landmass", "park", "zoo", "aquarium", "museum", "movie theatre", "hospital", "library"],
+		"draw": 3,
+		"pick":1
+		},
+	"Measuring":{
+		"template":"Compared to me, are you closer to or further from _____?",
+                "filters": ["Airport", "Train Station", "Station name length", "town", "borough", "landmass", "park", "zoo", "aquarium", "museum", "movie theatre", "hospital", "library"],
+                "draw": 3,
+                "pick":1
+                },
+        "Thermometer":{
+                "template":"I just traveled (at least) _____. Am I hotter or colder?",
+                "filters": ["0.5 mi", "3 mi", "10 mi"],
+                "draw": 2,
+                "pick":1
+                },
+        "Radar":{
+                "template":"Are you within _____ of me?",
+                "filters": ["0.25 mi", "0.5 mi", "1 mi", "3 mi", "5 mi", "10 mi", "25 mi", "50 mi", "100 mi"],
+                "draw": 2,
+                "pick":1
+                },
+        "Tentacles":{
+                "template":"Of all the _____s within 1 mile of me, which are you closest to?",
+                "filters": ["Airport", "Train Station", "town", "borough", "landmass", "park", "zoo", "aquarium", "museum", "movie theatre", "hospital", "library"],
+                "draw": 4,
+                "pick":2
+                },
+        "Photos":{
+                "template":"Send a Photo of _____",
+                "filters": ["a tree", "the sky", "the widest street", "the tallest structure in your sightline", "any building visible from station", "the tallest building visible from your station", "trace of nearest street/path", "two buildings", "restaurant interior", "a train platform", "a park", "a grocery store aisle", "a place of worship"],
+                "draw": 1,
+                "pick":1
+                },
+	}
 cards={"3 min": 25,
        "6 min": 15,
        "9 min": 10,

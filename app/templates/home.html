@@ -2,7 +2,8 @@
 <!DOCTYPE html>                                                           
 <html lang="en">                                                          
 <head>                                                                        
-	<meta charset="UTF-8">                                                    
+	<meta charset="UTF-8">
+	<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">                                                    
 	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4>    
 	<link rel="stylesheet" href="../static/style.css">
@@ -10,23 +11,24 @@
 	<title>JetLag</title>
 	<style>
 		body {
-			font-family: Arial, sans-serif;
-			background-color: #f0f0f0;
-			padding: 40px;
+			font-family: 'Inter', sans-serif;
+			background-color: #f8f9fa;
+			color: #212529;
 		}
 		.card-container {
             		display: flex;
             		flex-wrap: wrap;
             		gap: 20px;
-            		justify-content: flex-start;
+            		justify-content: center;
+			padding: 10 px;
 		}
 		.card{
 		        background-color: white;
             		padding: 10px;
             		border-radius: 16px; /* More curve = more roundness */
             		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            		width: 140px; /* Permanent/fixed width */
-			height: 200px;
+            		width: 160px; /* Permanent/fixed width */
+			height: 220px;
             		text-align: center;
             		transition: transform 0.2s;
 			display: flex;
@@ -61,8 +63,72 @@
 		.card:hover {
 			transform: translateY(-5px);
 		}
-	</style>
+		.add-form,
+		.rem-form {
+   			position: absolute;
+			top: 8px;
+			right: 8px;
+			z-index: 2;
+			margin: 0;
+		}		
 
+		.add-button,
+		.rem-button {
+			background-color: #28a745;
+			color: white;
+			border: none;
+			border-radius: 50%;
+    			width: 24px;
+    			height: 24px;
+    			font-size: 16px;
+   			line-height: 24px;
+			text-align: center;
+		    	padding: 0;
+		    	cursor: pointer;
+		}
+		.rem-button {
+			background-color: #dc3545;
+		}
+
+		input[type="text"],
+		select {
+  			padding: 10px 14px;
+  			font-size: 14px;
+  			border: 1px solid #ccc;
+  			border-radius: 8px;
+  			width: 100%;
+  			max-width: 300px;
+  			transition: border 0.2s ease;
+		}
+
+		input[type="text"]:focus,
+		select:focus {
+  			border-color: #007bff;
+  			outline: none;
+			}
+
+		input[type="submit"] {
+		  	padding: 8px 12px;
+			margin: 5px 0;
+  			font-size: 14px;
+  			border: 1px solid #ccc;
+  			border-radius: 6px;
+  			box-sizing: border-box;
+			}
+
+		input[type="submit"] {
+  			background-color: #007BFF;
+  			color: white;
+  			border: none;
+  			cursor: pointer;
+			}
+
+		input[type="submit"]:hover {
+  			background-color: #0056b3;
+			}
+
+	</style>
+		
 </head>
 <body>
     <b><h1>JETLAG</h1></b>
@@ -71,6 +137,8 @@
 	<div class="event">
 		{% if username != "" and username != None %}
 			<h1>{{username}}</h1>
+			<p>Question: {{question}}</p>
+                        <p>Draws remaining: {{draws}}</p>
 		{% endif %}
         	<form action = "/" method="POST">
         	<input type="submit" class="random" name="random" value="Draw Card">
@@ -80,27 +148,34 @@
         	<input type="submit" class="user" name="user" value="Change User">
         	</form>
         	{% if show %}
-	        	<div class="card">
-				{% if card|length == 2 %}
-					<div class="front"><p>{{card[0]}}</p></div>
-					<div class="back">
-						<p>{{card[1][1]}}</p>
+			<div class="card-container">
+				{% for c in card %}
+					<div class="card">
+						<form action = "/" method="POST" class="add-form">
+                           				<button type="submit" class="add-button" name="add" value="{{c}}">+</button>
+                    				</form>
+						{% if c|length == 2 %}
+							<div class="front"><p>{{c[0]}}</p></div>
+							<div class="back">
+								<p>{{c[1][1]}}</p>
+							</div>
+						{% else %}
+							<p>{{c}}</p>
+						{% endif %}
 					</div>
-				{% else %}
-					<p>{{card}}</p>
-				{% endif %}
+				{% endfor %}
 			</div>
 			<br>
-	                <form action = "/" method="POST">
-                	<input type="submit" class="add" name="add" value="add">
-                	</form>	
 	    	{% endif %}
 	    	<br><br><br>
 		{% if all_cards != "" and all_cards != None %}
 			<div class="card-container">
 				{% for c in all_cards %}
-					<div class="card">
+					<div class="card" data-card="{{c}}">
 					{% if c != None %}
+						<form action = "/" method="POST" class="rem-form">
+                                                        <button type="submit" class="rem-button" name="rm" value="{{c}}">-</button>
+                                                </form>
 						{% set parts = c.split(" / ") %}
                                 		{% if parts|length > 1 %}
                                         		<div class="front"><p>{{parts[0]}}</div>                                        
@@ -111,13 +186,33 @@
 					{% endif %}
 					</div>
 				{% endfor %}                        	
-			
-				<form action = "/" method="POST">
-				<input type="remove" id="remove" name="remove" placeholder="Type here..." required>
-                		<input type="submit" class="rm" name="rm" value="remove">
-                		</form>
 			</div>
                 {% endif %}
+		{% if username != "" and username != None %}
+			{% for i in questions %}
+				<h3>{{i}}</h3>
+				<form method="POST" action="/">
+    					<label for="{{i}}">{{questions[i]['template']}}</label>
+    					<select name="{{i}}" id="{{i}}" required>
+        					<option value="">-- Select Place --</option>
+						{% for j in questions[i]['filters'] %}
+							<option value="{{j}}"> {{j}} </option>
+						{% endfor %}
+					</select>
+                			<select name="send" id="send" required>
+                                                <option value="">-- Select User --</option>
+                                                {% for k in allUsers %}
+							{% if k[0] != username %}
+                                                        	<option value="{{k[0]}}"> {{k[0]}} </option>
+							{% endif %}
+                                                {% endfor %}
+                                        </select>
+					<input type="submit" name="submit" value="Send Question">
+				</form>
+			{% endfor %}
+		{% endif %}
+		<br><br>
+
 	    	<h1>Questions</h1>
 	    	<h3>Matching</h3>
 		<p>Draw 3 Pick 1 : 5 minutes to Respond</p>
@@ -154,7 +249,39 @@
 		<br>
 		<p>Send a Photo of _____</p>
 		<p> A tree, the sky, you, widest street, tallest structure in your sightline, any building visible from station, tallest building visible from station, trace nearest street/path, trwo buildings, restaurant interior, train platform, Park, Grocery Store Aisle, Place of Worship</p>
-        </div>
-    </div>
-    <br><br><br>
+		</div>
+	</div>
+	<br><br><br>
+	<script>
+        document.querySelectorAll('.card').forEach(card => {
+                let startY = 0;
+
+                card.addEventListener('touchstart', e => {
+                        startY = e.touches[0].clientY;
+                });
+
+                card.addEventListener('touchend', e => {
+                        const endY = e.changedTouches[0].clientY;
+                        if (startY - endY > 50) {  // Swiped up
+                                const cardValue = card.dataset.card;
+				print(cardValue)
+                                fetch('/', {
+                                        method: 'POST',
+                                        headers: {
+                                        'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                                card: cardValue,
+                                                action: 'swipe'
+                                        })
+                                }).then(response => {
+                                        if (response.ok) {
+                                                alert("Card sent!");
+                                                // Optionally remove card from view
+                                        }
+                                });
+                        }
+                });
+        });
+        </script>
 </body>
