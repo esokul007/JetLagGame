@@ -21,7 +21,7 @@ def setup():
 def addUser(user): 
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
-    c.execute("INSERT or IGNORE INTO users (username, draws, picks, question, sentAt) VALUES (?, ?, ?)",(user, 0, 0, "", ""))
+    c.execute("INSERT or IGNORE INTO users (username, draws, picks, question, sentAt) VALUES (?, ?, ?, ?)",(user, 0, 0, "", ""))
     db.commit()
     db.close()
 
