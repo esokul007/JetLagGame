@@ -7,7 +7,7 @@ def setup():
 	db = sqlite3.connect(DB_FILE, check_same_thread=False)
 	c = db.cursor()
 	c.execute("DROP TABLE users;")
-	c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL UNIQUE, card1 TEXT, card2 TEXT,card3 TEXT,card4 TEXT,card5 TEXT, question TEXT, draws INTEGER, picks INTEGER);")   
+	c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL UNIQUE, card1 TEXT, card2 TEXT,card3 TEXT,card4 TEXT,card5 TEXT, question TEXT, sentAt TEXT, draws INTEGER, picks INTEGER);")   
  # c.execute("CREATE TABLE IF NOT EXISTS gameChallenge (challenge_ID INTEGER PRIMARY KEY AUTOINCREMENT, chal>
  # c.execute("CREATE TABLE IF NOT EXISTS gameHistory (game_ID INTEGER PRIMARY KEY, winner TEXT, loser TEXT);>
  # c.execute("CREATE TABLE IF NOT EXISTS gameTracker (game_ID INTEGER, player1 TEXT, player2 TEXT, move1 TE
@@ -102,10 +102,19 @@ def getQuestion(user):
     db.close()
     return result[0]
 
+def getSentAt(user):
+    db = sqlite3.connect(DB_FILE, check_same_thread=False)
+    c = db.cursor()
+    c.execute("SELECT sentAt FROM users WHERE username = (?)", (user,))
+    result=c.fetchone()
+    db.commit()
+    db.close()
+    return result[0]
+
 def sendQuest(user, question, draws, picks):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
-    c.execute("UPDATE users SET question = ?, draws = ?, picks = ? WHERE username = ?", (question, draws, picks, user))
+    c.execute("UPDATE users SET question = ?, sentAt = ?, draws = ?, picks = ? WHERE username = ?", (question, datetime.utcnow(), draws, picks, user))
     db.commit()
     db.close()
 
