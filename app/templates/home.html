@@ -144,11 +144,13 @@
 		{% if username != "" and username != None %}
 			<h1>{{username}}</h1>
 			<p>Question: {{question}}</p>
-                        <p>Draws remaining: {{draws}}</p>
+			{% if draws > 0 %}
+                        	<p>Draws remaining: {{draws}}</p>
+				<form action = "/" method="POST">
+				<input type="submit" class="random" name="random" value="Draw" >
+				</form>
+			{% endif %}
 		{% endif %}
-        	<form action = "/" method="POST">
-        	<input type="submit" class="random" name="random" value="Draw Card">
-        	</form>
         	<form action = "/" method="POST">
         	<input type="text" id="username" name="username" placeholder="Type here..." required>
         	<input type="submit" class="user" name="user" value="Change User">
