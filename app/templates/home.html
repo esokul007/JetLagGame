@@ -54,6 +54,25 @@
 			opacity: 0;
 			font-size: 10px;
 		}
+		.card-footer {
+  			position: absolute;
+  			left: 0;
+  			bottom: 16px;
+  			width: 100%;
+  			display: flex;
+  			justify-content: center;
+  			pointer-events: auto;
+  			background: transparent;
+  			z-index: 10;
+		}
+		.user-dropdown {
+  			padding: 10px 14px;
+  			font-size: 14px;
+  			border: 1px solid #ccc;
+  			border-radius: 8px;
+  			width: 80%;
+  			max-width: 200px;
+		}
 		.card.swipe-up{
 			transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
 		}
@@ -143,12 +162,17 @@
 	<div class="event">
 		{% if username != "" and username != None %}
 			<h1>{{username}}</h1>
-			<p>Question: {{question}}</p>
-                        <p>Draws remaining: {{draws}}</p>
+			{% if question != "" %}
+				<p>Question: {{question}}</p>
+				<b>Timer: <span id="timer"></span></b>
+			{% endif %}
+			{% if draws > 0 %}
+                        	<p>Draws remaining: {{draws}}</p>
+				<form action = "/" method="POST">
+				<input type="submit" class="random" name="random" value="Draw" >
+				</form>
+			{% endif %}
 		{% endif %}
-        	<form action = "/" method="POST">
-        	<input type="submit" class="random" name="random" value="Draw Card">
-        	</form>
         	<form action = "/" method="POST">
         	<input type="text" id="username" name="username" placeholder="Type here..." required>
         	<input type="submit" class="user" name="user" value="Change User">
@@ -189,6 +213,20 @@
                                 		{% else %}
                                         		<p>{{c}}</p>
                                 		{% endif %}
+						<div class="card-footer">
+							{% if c[0] == "C" %}
+                                                        	<div class="card-footer">
+                                                        	        <select class="user-dropdown" required>
+                                                        	                <option value="">Send to...</option>
+                                                        		                {% for user in allUsers %}
+                                                        	                      {% if user[0] != username %}
+                                                        	                      <option value="{{ user[0] }}">{{ user[0] }}</option>
+                                                        	                      {% endif %}
+                                                        	                {% endfor %}
+                                                        	        </select>
+                                                       		 </div>
+                                                	{% endif %}
+						</div>
 					{% endif %}
 					</div>
 				{% endfor %}
@@ -265,7 +303,7 @@
 		let activeCard = null;
 
                 card.addEventListener('touchstart', e => {
-			if (e.target.closest('.add-button')||e.target.closest('.rem-button')) return; // Allow button tap
+			if (e.target.closest('.add-button')||e.target.closest('.rem-button') || e.target.closest(".user-dropdown")) return; // Allow button tap
 			e.preventDefault();
                         startY = e.touches[0].clientY;
 			startX = e.touches[0].clientX;
@@ -295,6 +333,12 @@
     		}, { passive: false });
 
                 card.addEventListener('touchend', e => {
+			// Add this check:
+			if (e.target.closest('.user-dropdown')) {
+			        card.classList.remove('curve');
+			        card.style.transform = "";
+        		        return;
+    				}
 			card.classList.remove('curve');
 			card.style.transform="";
                         const endY = e.changedTouches[0].clientY;
@@ -361,6 +405,13 @@
 						    }
 
 						    function mouseUpHandler(e) {
+							if (e.target.closest('.user-dropdown')) {
+        							mouseDown = false;
+        							activeCard = null;
+        							document.removeEventListener('mouseup', mouseUpHandler);
+        							document.removeEventListener('mousemove', mouseMoveHandler);
+        							return;
+    							}
 						        if (!mouseDown || !activeCard) return;
 						        mouseDown = false;
 						        activeCard.classList.remove('curve');
@@ -378,6 +429,9 @@
         	function handleSwipe(cardElem) {
             		const cardValue = cardElem.dataset.card;
             		if (typeof cardValue === "undefined") return;
+			// Find the dropdown in this card
+    			const select = cardElem.querySelector('.user-dropdown');
+    			const user = select ? select.value : "";
             		cardElem.classList.add('swipe-up');
             		setTimeout(() => {
                 		cardElem.classList.remove('swipe-up');
@@ -390,7 +444,8 @@
                 		},
                 		body: JSON.stringify({
                     			card: cardValue,
-                    			action: 'swipe'
+                    			action: 'swipe',
+					user: user
                 		})
             		}).then(response => {
                 		if (response.ok) {
@@ -399,6 +454,25 @@
                 		}
             		});
         	}
+			function startQuestionTimer(sentAtString, allowedTimeSeconds) {
+					const sentAt = new Date(sentAtString + "Z"); // Parse the time the question was sent (in UTC)
+					const allowedTime = allowedTimeSeconds; // How many seconds the user has to answer
+					const timerElem = document.getElementById('timer'); // Where the timer will be displayed
+
+					function updateTimer() {
+							const now = new Date(); // Current time
+							const elapsed = (now - sentAt) / 1000; // How many seconds since the question was sent
+							const remaining = Math.max(0, allowedTime - elapsed); // Time left, never less than 0
+							const min = Math.floor(remaining / 60);
+							const sec = Math.floor(remaining % 60);
+							timerElem.textContent = `${min}:${sec.toString().padStart(2,'0')}`; // Show as MM:SS
+							if (remaining > 0) setTimeout(updateTimer, 1000); // Update every second
+							else timerElem.textContent = "Time's up!"; // When time runs out	
+					}
+					updateTimer(); // Start the timer
+			}
+			startQuestionTimer("{{ sentAt }}", {{ allowed_time|default(300) }});
+
     	});
         </script>
 </body>

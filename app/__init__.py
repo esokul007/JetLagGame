@@ -14,6 +14,7 @@ def home():
                 session['drawn'] =[]
                 session['show'] = False
                 session['question'] = ""
+                session['sentAt'] = ""
                 session['draws'] = 0
                 session['picks'] = 0
         elif session['username'] != '':
@@ -21,12 +22,14 @@ def home():
                 session['draws'] = db.getDraws(session['username'])
                 session['picks'] = db.getPicks(session['username'])
                 session['question'] = db.getQuestion(session['username'])
+                session['sentAt'] = db.getSentAt(session['username'])
         all_users = db.getAllUsers()
         username = session['username']
         all_cards= session['all_cards']
         show=session['show']
         card = session['drawn']
         question = session['question']
+        sentAt = session['sentAt']
         draws = session['draws']
         picks = session['picks']
         if request.method == 'POST':
@@ -38,9 +41,12 @@ def home():
                         data=request.get_json()
                         if data.get('action') == "swipe":
                                 card=data.get('card')
+                                recipient=data.get("user")
                                 parts=card.split(' / ') # Just take curse name
-                                print(parts[0])
+                                print(recipient)
                                 db.remCard(username, parts[0])
+                                if recipient:
+                                        db.addCard(recipient, card)
                                 return jsonify(success=True)
                 for key in questions:
                         if request.form.get("submit") and request.form.get(key) != None:
@@ -82,7 +88,7 @@ def home():
                 return redirect(url_for('home'))
         #print(username)
         session['show'] = False
-        return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users)
+        return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users, sentAt = sentAt, allowed_time = 300)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0')
