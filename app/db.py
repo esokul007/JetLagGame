@@ -3,11 +3,11 @@ import csv
 from datetime import datetime
 
 DB_FILE = "players.db"
-def setup():            
+def setup():
 	db = sqlite3.connect(DB_FILE, check_same_thread=False)
 	c = db.cursor()
 	c.execute("DROP TABLE users;")
-	c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL UNIQUE, card1 TEXT, card2 TEXT,card3 TEXT,card4 TEXT,card5 TEXT, question TEXT, draws INTEGER, picks INTEGER);")   
+	c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL UNIQUE, card1 TEXT, card2 TEXT,card3 TEXT,card4 TEXT,card5 TEXT, question TEXT, draws INTEGER, picks INTEGER, cursed BOOLEAN);")
  # c.execute("CREATE TABLE IF NOT EXISTS gameChallenge (challenge_ID INTEGER PRIMARY KEY AUTOINCREMENT, chal>
  # c.execute("CREATE TABLE IF NOT EXISTS gameHistory (game_ID INTEGER PRIMARY KEY, winner TEXT, loser TEXT);>
  # c.execute("CREATE TABLE IF NOT EXISTS gameTracker (game_ID INTEGER, player1 TEXT, player2 TEXT, move1 TE
@@ -18,7 +18,7 @@ def setup():
 # Reset DB
 #setup()
 
-def addUser(user): 
+def addUser(user):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
     c.execute("INSERT or IGNORE INTO users (username, draws, picks) VALUES (?, ?, ?)",(user, 0, 0))
@@ -27,7 +27,7 @@ def addUser(user):
 
 def addCard(user, card):
     index=4
-    db = sqlite3.connect(DB_FILE, check_same_thread=False)                       
+    db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
     c.execute("SELECT card1, card2, card3, card4, card5 FROM users WHERE username = (?)", (user,))
     result=c.fetchone()
@@ -38,7 +38,7 @@ def addCard(user, card):
     c.execute(f"UPDATE users SET card{index + 1} = ? WHERE username = ?", (card, user))
     print(result)
     db.commit()
-    db.close()  
+    db.close()
 
 def getAllUsers():
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
@@ -102,6 +102,16 @@ def getQuestion(user):
     db.close()
     return result[0]
 
+def getCursed(user):
+    db = sqlite3.connect(DB_FILE, check_same_thread=False)
+    c = db.cursor()
+    c.execute("SELECT cursed FROM users WHERE username = (?)", (user,))
+    result=c.fetchone()
+    db.commit()
+    db.close()
+    return result[0]
+
+
 def sendQuest(user, question, draws, picks):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
@@ -128,5 +138,12 @@ def setQuestion(user, question):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
     c.execute("UPDATE users SET question = ? WHERE username = ?", (question, user))
+    db.commit()
+    db.close()
+
+def setCursed(user, question):
+    db = sqlite3.connect(DB_FILE, check_same_thread=False)
+    c = db.cursor()
+    c.execute("UPDATE users cursed question = ? WHERE username = ?", (question, user))
     db.commit()
     db.close()
