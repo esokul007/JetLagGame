@@ -41,9 +41,12 @@ def home():
                         data=request.get_json()
                         if data.get('action') == "swipe":
                                 card=data.get('card')
+                                recipient=data.get("user")
                                 parts=card.split(' / ') # Just take curse name
-                                print(parts[0])
+                                print(recipient)
                                 db.remCard(username, parts[0])
+                                if recipient:
+                                        db.addCard(recipient, card)
                                 return jsonify(success=True)
                 for key in questions:
                         if request.form.get("submit") and request.form.get(key) != None:
