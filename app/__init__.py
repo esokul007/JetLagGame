@@ -17,12 +17,14 @@ def home():
                 session['sentAt'] = ""
                 session['draws'] = 0
                 session['picks'] = 0
+                session['cursed'] = False
         elif session['username'] != '':
                 session['all_cards'] = db.getCards(session['username'])
                 session['draws'] = db.getDraws(session['username'])
                 session['picks'] = db.getPicks(session['username'])
                 session['question'] = db.getQuestion(session['username'])
                 session['sentAt'] = db.getSentAt(session['username'])
+                session['cursed'] = db.getCursed(session['username'])
         all_users = db.getAllUsers()
         username = session['username']
         all_cards= session['all_cards']
@@ -30,6 +32,7 @@ def home():
         card = session['drawn']
         question = session['question']
         sentAt = session['sentAt']
+        cursed = session['cursed']
         draws = session['draws']
         picks = session['picks']
         if request.method == 'POST':
@@ -58,8 +61,9 @@ def home():
                                 print(send_to_user)
                                 if send_to_user != username:
                                         db.sendQuest(send_to_user, send, draws, picks)
+                                        db.setCursed(send_to_user)
                                 # print(send, request.form["send"])
-                
+
                 if added:
                         if added[0] != '(': # eliminates the curses
                                 db.addCard(username,added)
@@ -88,7 +92,7 @@ def home():
                 return redirect(url_for('home'))
         #print(username)
         session['show'] = False
-        return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users, sentAt = sentAt, allowed_time = 300)
+        return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users, sentAt = sentAt, allowed_time = 300, cursed = cursed)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0')
