@@ -347,7 +347,9 @@
 document.querySelectorAll('.card').forEach(card => {
     let startY = 0, startX = 0; // Track starting points
     let moved = false; // NEW: Track if the user actually moved the finger
-
+	let mouseDown = false;
+	let activeCard=null;
+	
     card.addEventListener('touchstart', e => {
         // Ignore if interacting with a button or dropdown
         if (e.target.closest('.add-button') || e.target.closest('.rem-button') || e.target.closest(".user-dropdown")) return;

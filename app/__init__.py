@@ -49,6 +49,7 @@ def home():
                                 print(recipient)
                                 db.remCard(username, parts[0])
                                 if recipient:
+                                        db.setCursed(recipient)
                                         db.addCard(recipient, card)
                                 return jsonify(success=True)
                 for key in questions:
@@ -61,7 +62,6 @@ def home():
                                 print(send_to_user)
                                 if send_to_user != username:
                                         db.sendQuest(send_to_user, send, draws, picks)
-                                        db.setCursed(send_to_user)
                                 # print(send, request.form["send"])
 
                 if added:
