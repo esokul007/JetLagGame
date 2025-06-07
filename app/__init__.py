@@ -92,6 +92,7 @@ def home():
                 return redirect(url_for('home'))
         #print(username)
         session['show'] = False
+        print(cursed)
         return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users, sentAt = sentAt, allowed_time = 300, cursed = cursed)
 
 if __name__ == '__main__':
