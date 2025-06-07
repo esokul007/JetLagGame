@@ -518,14 +518,19 @@ function handleSwipe(cardElem) {
 		function showCurseOverlay() {
 				const overlay = document.getElementById('curse-overlay');
 				const flash = document.getElementById('curse-flash');
+				const message = document.getElementById('curse-message');
 				overlay.style.display = 'flex';
 				// Remove .pulse if present, re-trigger initial effect
 				flash.classList.remove('pulse');
+				message.style.display = '';
 				flash.style.animation = "none";
+				message.style.animation = "none";
 				void flash.offsetWidth; // force reflow
 				flash.style.animation = null;
+				message.style.animation = null;
 				// After 2s (or however long your entry animation is), switch to pulse
 				setTimeout(() => {
+					message.style.display = "none";
 					flash.classList.add('pulse');
 				}, 3000); // match the initial effect duration
 			}
