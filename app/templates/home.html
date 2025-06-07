@@ -349,7 +349,7 @@ document.querySelectorAll('.card').forEach(card => {
     let moved = false; // NEW: Track if the user actually moved the finger
 	let mouseDown = false;
 	let activeCard=null;
-	
+
     card.addEventListener('touchstart', e => {
         // Ignore if interacting with a button or dropdown
         if (e.target.closest('.add-button') || e.target.closest('.rem-button') || e.target.closest(".user-dropdown")) return;
@@ -418,7 +418,7 @@ document.querySelectorAll('.card').forEach(card => {
 // --- END: REPLACE ---
 								// Mouse events
 						    card.addEventListener('mousedown', e => {
-						        if (e.target.closest('.add-button')||e.target.closest('.rem-button')) return; // Allow button click
+						        if (e.target.closest('.add-button')||e.target.closest('.rem-button')|| e.target.closest(".user-dropdown")) return; // Allow button click
 						        mouseDown = true;
 						        startY = e.clientY;
 						        startX = e.clientX;
