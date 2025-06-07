@@ -107,11 +107,19 @@ def getCursed(user):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
     c.execute("SELECT cursed FROM users WHERE username = (?)", (user,))
+    result=c.fetchone()
+    db.commit()
+    db.close()
+    return result[0]
 
 def getSentAt(user):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
     c.execute("SELECT sentAt FROM users WHERE username = (?)", (user,))
+    result=c.fetchone()
+    db.commit()
+    db.close()
+    return result[0]
 
     result=c.fetchone()
     db.commit()
