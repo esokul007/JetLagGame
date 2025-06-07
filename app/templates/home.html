@@ -415,88 +415,66 @@ document.querySelectorAll('.card').forEach(card => {
 });
 
 // --- END: REPLACE ---
-								// Mouse events
-						    card.addEventListener('mousedown', e => {
-						        if (e.target.closest('.add-button')||e.target.closest('.rem-button')|| e.target.closest(".user-dropdown")) return; // Allow button click
-						        mouseDown = true;
-						        startY = e.clientY;
-						        startX = e.clientX;
-						        activeCard = card;
-						        card.classList.add('curve');
-						        document.addEventListener('mousemove', mouseMoveHandler);
-						        document.addEventListener('mouseup', mouseUpHandler);
-						    });
+function mouseMoveHandler(e) {
+    if (!mouseDown || !activeCard) return;
+    let dy = e.clientY - startY;
+    let transform = '';
+    if (dy < 0) {
+        dy = Math.max(dy, -120)
+        if (dy > -50) {
+            transform = `translateY(${dy}px)`;
+        } else {
+            const rotate = Math.min(-(dy + 50) / 3, 20);
+            const theta = rotate * Math.PI / 180;
+            const w = activeCard.offsetWidth;
+            const compensateX = w * (1 - Math.cos(theta));
+            transform = `translate(${compensateX}px, ${dy}px) rotate(${rotate}deg)`;
+        }
+        activeCard.style.transform = transform;
+    }
+}
 
-						    function mouseMoveHandler(e) {
-						        if (!mouseDown || !activeCard) return;
-						        let dy = e.clientY - startY; // vertical movement
-						        let dx = e.clientX - startX; // horizontal movement
-						        let transform = '';
-						        if (dy < 0) {
-						            dy = Math.max(dy, -120)
-						            if (dy > -50) {
-						                transform = `translateY(${dy}px)`;
-						            } else {
-						                const rotate = Math.min(-(dy + 50) / 3, 20);
-						                const theta = rotate * Math.PI / 180;
-						                const w = activeCard.offsetWidth;
-						                const compensateX = w * (1 - Math.cos(theta));
-						                transform = `translate(${compensateX}px, ${dy}px) rotate(${rotate}deg)`;
-						            }
-						            activeCard.style.transform = transform;
-						        }
-						    }
+function mouseUpHandler(e) {
+    if (e.target.closest('.user-dropdown')) {
+        mouseDown = false;
+        activeCard = null;
+        document.removeEventListener('mouseup', mouseUpHandler);
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        return;
+    }
+    if (!mouseDown || !activeCard) return;
+    mouseDown = false;
+    activeCard.classList.remove('curve');
+    activeCard.style.transform = '';
+    const endY = e.clientY;
+    if (startY - endY > 50) {
+        handleSwipe(activeCard);
+    }
+    activeCard = null;
+    document.removeEventListener('mouseup', mouseUpHandler);
+    document.removeEventListener('mousemove', mouseMoveHandler);
+}
 
-						    function mouseUpHandler(e) {
-							if (e.target.closest('.user-dropdown')) {
-        							mouseDown = false;
-        							activeCard = null;
-        							document.removeEventListener('mouseup', mouseUpHandler);
-        							document.removeEventListener('mousemove', mouseMoveHandler);
-        							return;
-    							}
-						        if (!mouseDown || !activeCard) return;
-						        mouseDown = false;
-						        activeCard.classList.remove('curve');
-						        activeCard.style.transform = '';
-						        const endY = e.clientY;
-						        if (startY - endY > 50) {  // Swiped up
-						            handleSwipe(activeCard);
-						        }
-						        activeCard = null;
-						        document.removeEventListener('mouseup', mouseUpHandler);
-						        document.removeEventListener('mousemove', mouseMoveHandler);
-						    }
-
-        	// Reusable swipe handler (unchanged)
-        	function handleSwipe(cardElem) {
-            		const cardValue = cardElem.dataset.card;
-            		if (typeof cardValue === "undefined") return;
-			// Find the dropdown in this card
-    			const select = cardElem.querySelector('.user-dropdown');
-    			const user = select ? select.value : "";
-            		cardElem.classList.add('swipe-up');
-            		setTimeout(() => {
-                		cardElem.classList.remove('swipe-up');
-            		}, 500);
-            		console.log(cardValue)
-            		fetch('/', {
-                		method: 'POST',
-                		headers: {
-                    			'Content-Type': 'application/json'
-                		},
-                		body: JSON.stringify({
-                    			card: cardValue,
-                    			action: 'swipe',
-					user: user
-                		})
-            		}).then(response => {
-                		if (response.ok) {
-                    			alert("Card sent!");
-                    			window.location.reload();
-                		}
-            		});
-        	}
+function handleSwipe(cardElem) {
+    const cardValue = cardElem.dataset.card;
+    if (typeof cardValue === "undefined") return;
+    const select = cardElem.querySelector('.user-dropdown');
+    const user = select ? select.value : "";
+    cardElem.classList.add('swipe-up');
+    setTimeout(() => {
+        cardElem.classList.remove('swipe-up');
+    }, 500);
+    fetch('/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({card: cardValue, action: 'swipe', user: user})
+    }).then(response => {
+        if (response.ok) {
+            alert("Card sent!");
+            window.location.reload();
+        }
+    });
+}
 			function startQuestionTimer(sentAtString, allowedTimeSeconds) {
 					const sentAt = new Date(sentAtString + "Z"); // Parse the time the question was sent (in UTC)
 					const allowedTime = allowedTimeSeconds; // How many seconds the user has to answer
