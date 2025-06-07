@@ -345,8 +345,8 @@
 				// --- BEGIN: REPLACE your touch events for '.card' with the following ---
 	let mouseDown = false;
 	let activeCard=null;
+	let startY = 0, startX = 0; // Track starting points
 document.querySelectorAll('.card').forEach(card => {
-    let startY = 0, startX = 0; // Track starting points
     let moved = false; // NEW: Track if the user actually moved the finger
 
     card.addEventListener('touchstart', e => {
