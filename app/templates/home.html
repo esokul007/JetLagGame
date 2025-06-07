@@ -131,13 +131,17 @@
 			background: radial-gradient(circle, #a020f088 0%, #00000088 100%);
 			animation: curse-flash-effect 2s ease-in-out;
 		}
+		#curse-flash.pulse {
+    		/* When pulse class is added, use infinite pulse animation */
+    		animation: curse-bg-pulse 2.5s ease-in-out infinite;
+}
 		#curse-message {
 			position: relative;
 			color: #fff;
 			font-size: 2.5em;
 			font-weight: bold;
 			text-shadow: 0 0 16px #a020f0, 0 0 40px #000;
-			animation: curse-message-pop 2s;
+			animation: curse-message-pop 3s;
 			z-index: 2;
 			padding: 20px 40px;
 			background: rgba(0,0,0,0.2);
@@ -150,6 +154,12 @@
 			80% { opacity: 1; }
 			100% { opacity: 0; }
 		}
+		@keyframes curse-bg-pulse {
+			0% { filter: blur(0px) brightness(1); }
+			40% { filter: blur(6px) brightness(1.25);}
+			60% { filter: blur(2px) brightness(1.1);}
+			100% { filter: blur(0px) brightness(1);}
+}
 		@keyframes curse-message-pop {
 			0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
 			40% { transform: scale(1.2) rotate(5deg); opacity: 1; }
@@ -505,14 +515,23 @@ function handleSwipe(cardElem) {
 			startQuestionTimer("{{ sentAt }}", {{ allowed_time|default(300) }});
 
 		const isCursed = {{ 'true' if cursed else 'false' }};
-
+		function showCurseOverlay() {
+				const overlay = document.getElementById('curse-overlay');
+				const flash = document.getElementById('curse-flash');
+				overlay.style.display = 'flex';
+				// Remove .pulse if present, re-trigger initial effect
+				flash.classList.remove('pulse');
+				flash.style.animation = "none";
+				void flash.offsetWidth; // force reflow
+				flash.style.animation = null;
+				// After 2s (or however long your entry animation is), switch to pulse
+				setTimeout(() => {
+					flash.classList.add('pulse');
+				}, 3000); // match the initial effect duration
+			}
   		window.addEventListener("DOMContentLoaded", function() {
     		if (isCursed) {
-      			const overlay = document.getElementById('curse-overlay');
-      			overlay.style.display = 'flex';
-      			setTimeout(() => {
-        		overlay.style.display = 'none';
-      			}, 900);
+      			showCurseOverlay();
     		}
     	});
         </script>
