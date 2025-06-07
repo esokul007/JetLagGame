@@ -155,9 +155,9 @@ def setQuestion(user, question):
     db.commit()
     db.close()
 
-def setCursed(user):
+def setCursed(user, cursed):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
-    c.execute("UPDATE users SET cursed = ? WHERE username = ?", (True, user))
+    c.execute("UPDATE users SET cursed = ? WHERE username = ?", (cursed, user))
     db.commit()
     db.close()
