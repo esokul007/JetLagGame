@@ -116,56 +116,94 @@
 		}
 		#curse-overlay {
 			position: fixed;
-			top: 0; left: 0; width: 100vw; height: 100vh;
+			inset: 0;
 			z-index: 9999;
 			pointer-events: none;
-			display: flex;
+			display: none; /* Show with JS when cursed */
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			display: none;
 		}
+
+		/* Cracks effect using gradients */
 		#curse-flash {
 			position: absolute;
-			width: 100vw; height: 100vh;
-			background: radial-gradient(circle, #a020f088 0%, #00000088 100%);
-			animation: curse-flash-effect 2s ease-in-out;
+			inset: 0;
+			pointer-events: none;
+			z-index: 1;
+			background:
+				radial-gradient(ellipse at 50% 50%,
+					transparent 68%,
+					rgba(35,0,48,0.55) 80%,
+					rgba(15,0,18,0.8) 97%,
+					transparent 100%
+				),
+				repeating-conic-gradient(
+					from 0deg,
+					transparent 0deg 8deg,
+					rgba(50,0,50,0.22) 10deg 17deg
+				);
+			opacity: 0.85;
+			animation: curse-cracks-pulse 2.5s ease-in-out infinite;
 		}
-		#curse-flash.pulse {
-    		/* When pulse class is added, use infinite pulse animation */
-    		animation: curse-bg-pulse 2.5s ease-in-out infinite;
-}
+
+		@keyframes curse-cracks-pulse {
+			0%, 100% {
+				opacity: 0.7;
+				filter: blur(2.5px) brightness(1);
+			}
+			45% {
+				opacity: 1;
+				filter: blur(0.5px) brightness(1.15);
+			}
+			55% {
+				opacity: 1;
+				filter: blur(0.5px) brightness(1.15);
+			}
+		}
+
+		/* Message styling */
 		#curse-message {
 			position: relative;
 			color: #fff;
 			font-size: 2.5em;
 			font-weight: bold;
 			text-shadow: 0 0 16px #a020f0, 0 0 40px #000;
-			animation: curse-message-pop 3s;
+			animation: curse-message-pop 2s;
 			z-index: 2;
 			padding: 20px 40px;
 			background: rgba(0,0,0,0.2);
 			border-radius: 20px;
+			/* Optionally add border or more glow */
 		}
-		@keyframes curse-flash-effect {
-			0% { opacity: 0; }
-			20% { opacity: 1; }
-			50% { opacity: 0.7; }
-			80% { opacity: 1; }
-			100% { opacity: 0; }
-		}
-		@keyframes curse-bg-pulse {
-			0% { filter: blur(0px) brightness(1); }
-			40% { filter: blur(6px) brightness(1.25);}
-			60% { filter: blur(2px) brightness(1.1);}
-			100% { filter: blur(0px) brightness(1);}
-}
+
 		@keyframes curse-message-pop {
 			0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
 			40% { transform: scale(1.2) rotate(5deg); opacity: 1; }
 			60% { transform: scale(0.9) rotate(-3deg);}
 			100% { transform: scale(1) rotate(0deg); opacity: 1; }
 		}
+
+				@keyframes curse-flash-effect {
+					0% { opacity: 0; }
+					20% { opacity: 1; }
+					50% { opacity: 0.7; }
+					80% { opacity: 1; }
+					100% { opacity: 0; }
+				}
+				@keyframes curse-bg-pulse {
+					0% { filter: blur(0px) brightness(1); }
+					40% { filter: blur(6px) brightness(1.25);}
+					60% { filter: blur(2px) brightness(1.1);}
+					100% { filter: blur(0px) brightness(1);}
+		}
+				@keyframes curse-message-pop {
+					0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+					40% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+					60% { transform: scale(0.9) rotate(-3deg);}
+					100% { transform: scale(1) rotate(0deg); opacity: 1; }
+				}
+				
 		input[type="text"],
 		select {
   			padding: 10px 14px;
@@ -516,24 +554,16 @@ function handleSwipe(cardElem) {
 
 		const isCursed = {{ 'true' if cursed else 'false' }};
 		function showCurseOverlay() {
-				const overlay = document.getElementById('curse-overlay');
-				const flash = document.getElementById('curse-flash');
-				const message = document.getElementById('curse-message');
-				overlay.style.display = 'flex';
-				// Remove .pulse if present, re-trigger initial effect
-				flash.classList.remove('pulse');
-				message.style.display = '';
-				flash.style.animation = "none";
-				message.style.animation = "none";
-				void flash.offsetWidth; // force reflow
-				flash.style.animation = null;
-				message.style.animation = null;
-				// After 2s (or however long your entry animation is), switch to pulse
-				setTimeout(() => {
-					message.style.display = "none";
-					flash.classList.add('pulse');
-				}, 3000); // match the initial effect duration
-			}
+			const overlay = document.getElementById('curse-overlay');
+			const message = document.getElementById('curse-message');
+			overlay.style.display = 'flex';
+			message.style.display = ''; // show the message
+			// Hide the message after 2 seconds (optional)
+			setTimeout(() => {
+				message.style.display = "none";
+			}, 3000);
+		}
+
   		window.addEventListener("DOMContentLoaded", function() {
     		if (isCursed) {
       			showCurseOverlay();
