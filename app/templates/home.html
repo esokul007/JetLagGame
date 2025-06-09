@@ -34,7 +34,15 @@
 			{% endif %}
 			{% if cursed %}
 				<div id="curse-card-container">
-					<div class="card">{{ curseCard }}</div>
+					<div class="card">
+						{% set parts = curseCard.split(" / ") %}
+                            {% if parts|length > 1 %}
+                                    <div class="front"><p>{{parts[0]}}</div>
+									<div class="back">{{parts[1]}}<p></div>
+                            {% else %}
+                                    <p>{{curseCard}}</p>
+                            {% endif %}
+					</div>
 				</div>
 			{% endif %}
 		{% endif %}
