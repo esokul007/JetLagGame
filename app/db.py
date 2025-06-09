@@ -7,7 +7,7 @@ def setup():
 	db = sqlite3.connect(DB_FILE, check_same_thread=False)
 	c = db.cursor()
 	c.execute("DROP TABLE users;")
-	c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL UNIQUE, card1 TEXT, card2 TEXT,card3 TEXT,card4 TEXT,card5 TEXT, curseCard TEXT question TEXT, sentAt TEXT, draws INTEGER, picks INTEGER, cursed BOOLEAN);")
+	c.execute("CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL UNIQUE, card1 TEXT, card2 TEXT,card3 TEXT,card4 TEXT,card5 TEXT, curseCard TEXT, question TEXT, sentAt TEXT, draws INTEGER, picks INTEGER, cursed BOOLEAN);")
  # c.execute("CREATE TABLE IF NOT EXISTS gameChallenge (challenge_ID INTEGER PRIMARY KEY AUTOINCREMENT, chal>
  # c.execute("CREATE TABLE IF NOT EXISTS gameHistory (game_ID INTEGER PRIMARY KEY, winner TEXT, loser TEXT);>
  # c.execute("CREATE TABLE IF NOT EXISTS gameTracker (game_ID INTEGER, player1 TEXT, player2 TEXT, move1 TE
@@ -16,7 +16,7 @@ def setup():
 	db.close()
 
 # Reset DB
-#setup()
+# setup()
 
 def addUser(user):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
