@@ -166,6 +166,6 @@ def setCursed(user, cursed, card = None):
     if card == None:
         c.execute("UPDATE users SET cursed = ? WHERE username = ?", (cursed, user))
     else:
-         c.execute("UPDATE users SET curseCard = ?, cursed = ? WHERE username = ?", (card, cursed))
+         c.execute("UPDATE users SET curseCard = ?, cursed = ? WHERE username = ?", (card, cursed, user))
     db.commit()
     db.close()
