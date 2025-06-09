@@ -52,7 +52,7 @@ def home():
                                 print(recipient)
                                 db.remCard(username, parts[0])
                                 if recipient:
-                                        db.setCursed(recipient, True)
+                                        db.setCursed(recipient, True, card)
                                         # db.addCard(recipient, card)
                                 return jsonify(success=True)
                 for key in questions:
