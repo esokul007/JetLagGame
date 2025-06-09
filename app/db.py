@@ -112,7 +112,7 @@ def getCursed(user):
     db.close()
     return result[0]
 
-def getCursed(user):
+def getCurseCard(user):
     db = sqlite3.connect(DB_FILE, check_same_thread=False)
     c = db.cursor()
     c.execute("SELECT curseCard FROM users WHERE username = (?)", (user,))
