@@ -8,7 +8,7 @@
             		flex-wrap: wrap;
             		gap: 20px;
             		justify-content: center;
-			padding: 10 px;
+			        padding: 10 px;
 		}
 		.card{
 		        background-color: white;
@@ -76,6 +76,31 @@
 		.card:hover {
 			transform: translateY(-5px);
 		}
+        #curse-card-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 10000;
+            pointer-events: none;
+        }   
+
+        .curse-card {
+            background: white;
+            color: #212529;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(160, 32, 240, 0.18), 0 0 0 4px #a020f044;
+            padding: 18px 26px;
+            min-width: 110px;
+            min-height: 60px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            margin-bottom: 8px;
+            transition: box-shadow 0.2s;
+        }
 		.add-form,
 		.rem-form {
    			position: absolute;

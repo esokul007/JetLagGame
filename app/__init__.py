@@ -18,6 +18,7 @@ def home():
                 session['draws'] = 0
                 session['picks'] = 0
                 session['cursed'] = False
+                session['curseCard']=""
         elif session['username'] != '':
                 session['all_cards'] = db.getCards(session['username'])
                 session['draws'] = db.getDraws(session['username'])
@@ -25,6 +26,7 @@ def home():
                 session['question'] = db.getQuestion(session['username'])
                 session['sentAt'] = db.getSentAt(session['username'])
                 session['cursed'] = db.getCursed(session['username'])
+                session['curseCard'] = db.getCurseCard(session['username'])
         all_users = db.getAllUsers()
         username = session['username']
         all_cards= session['all_cards']
@@ -33,6 +35,7 @@ def home():
         question = session['question']
         sentAt = session['sentAt']
         cursed = session['cursed']
+        curseCard = session['curseCard']
         draws = session['draws']
         picks = session['picks']
         if request.method == 'POST':
@@ -50,7 +53,7 @@ def home():
                                 db.remCard(username, parts[0])
                                 if recipient:
                                         db.setCursed(recipient, True)
-                                        db.addCard(recipient, card)
+                                        # db.addCard(recipient, card)
                                 return jsonify(success=True)
                 for key in questions:
                         if request.form.get("submit") and request.form.get(key) != None:
@@ -94,7 +97,7 @@ def home():
         db.setCursed(username, False)
         session['show'] = False
         print(cursed)
-        return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users, sentAt = sentAt, allowed_time = 300, cursed = cursed)
+        return render_template("home.html", card = card, show = show, username = username, all_cards = all_cards, questions = questions, draws= draws, question = question, picks = picks, allUsers= all_users, sentAt = sentAt, allowed_time = 300, cursed = cursed, curseCard = curseCard)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0')

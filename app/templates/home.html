@@ -32,6 +32,11 @@
 				<input type="submit" class="random" name="random" value="Draw" >
 				</form>
 			{% endif %}
+			{% if cursed %}
+				<div id="curse-card-container">
+					<div class="curse-card">{{ curseCard }}</div>
+				</div>
+			{% endif %}
 		{% endif %}
         	<form action = "/" method="POST">
         	<input type="text" id="username" name="username" placeholder="Type here..." required>
